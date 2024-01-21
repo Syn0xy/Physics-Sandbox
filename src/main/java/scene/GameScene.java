@@ -8,10 +8,15 @@ import scene.element.Water;
 import view.util.Subject;
 
 public class GameScene extends Subject {
-    private static final int WIDTH = 192;
-    private static final int HEIGHT = 108;
+    
+    private static final int WIDTH = 200;
+
+    private static final int HEIGHT = 200;
+    
     private static final Class<? extends Element> DEFAULT_ELEMENT = Wall.class;
+
     private static final Shape DEFAULT_SHAPE = Shape.PIXEL;
+    
     private static final int DIVIDE_SHAPE_SIZE = 8;
 
     private Element[][] elements;
@@ -78,7 +83,7 @@ public class GameScene extends Subject {
     }
     
     private void pixel(int x, int y){
-        if(isValidLocation(x, y) && elements[x][y].getClass() != crntElement){
+        if(isValidLocation(x, y) && (isEmpty(x, y) || crntElement == Empty.class)){
             try{
                 elements[x][y] = (Element)crntElement.getDeclaredConstructor().newInstance(new Object[0]);
             }catch(Exception e){

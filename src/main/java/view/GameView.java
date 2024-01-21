@@ -1,20 +1,19 @@
 package view;
 
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import scene.GameScene;
-import scene.Shape;
-import scene.Vector2;
-import scene.element.Water;
+import view.gui.GUI;
 import view.util.Observer;
 import view.util.Subject;
 
 public class GameView extends View implements Observer {
+
     private static final int WIDTH = (int)(SCREEN_WIDTH * (2.0 / 3.0));
+
     private static final int HEIGHT = (int)(SCREEN_HEIGHT * (2.0 / 3.0));
-    private static final String TITLE = "Cellular Automata";
+    
+    private static final String TITLE = "Physics Sandbox";
 
     private GameScene gameScene;
 
@@ -35,28 +34,10 @@ public class GameView extends View implements Observer {
     }
 
     @Override
-    public void view() {        
+    public void view() {
         GameCanvas canvas = new GameCanvas(gameScene);
-        canvas.addMouseListener(new MouseListener() {
-            private int crntShape = 0;
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                Vector2 vec2 = canvas.getLocationInMap(e.getX(), e.getY());
-                Shape[] values = Shape.values();
-                // gameScene.setSelectedElement(values[crntShape] == Shape.TRIANGLE ? Water.class : Sand.class);
-                gameScene.setSelectedElement(Water.class);
-                gameScene.setSelectedShape(values[crntShape]);
-                gameScene.setAction(vec2);
-                crntShape = (crntShape + 1) % values.length;
-            }
-
-            @Override public void mouseClicked(MouseEvent e) {}
-            @Override public void mouseEntered(MouseEvent e) {}
-            @Override public void mouseExited(MouseEvent e) {}
-            @Override public void mouseReleased(MouseEvent e) {}
-        });
-
+        GUI gui = new GameGUI(this, canvas, gameScene);
+        canvas.add(gui);
         add(canvas);
     }
 
