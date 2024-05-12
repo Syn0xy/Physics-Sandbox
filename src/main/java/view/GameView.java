@@ -1,13 +1,12 @@
 package view;
 
-import java.awt.Point;
+import java.awt.Component;
 
-import scene.GameScene;
+import model.scene.GameScene;
+import utils.Updatable;
 import view.gui.GUI;
-import view.util.Observer;
-import view.util.Subject;
 
-public class GameView extends View implements Observer {
+public class GameView extends View implements Updatable {
 
     private static final int WIDTH = (int)(SCREEN_WIDTH * (2.0 / 3.0));
 
@@ -24,36 +23,22 @@ public class GameView extends View implements Observer {
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return TITLE;
     }
-
+    
     @Override
-    public Point position() {
-        return center();
-    }
-
-    @Override
-    public void view() {
+    public Component getContent() {
         GameCanvas canvas = new GameCanvas(gameScene);
         GUI gui = new GameGUI(this, canvas, gameScene);
         canvas.add(gui);
-        add(canvas);
+        return canvas;
     }
 
     @Override
-    public void update(Subject subj) {
-        update();        
-    }
-
-    @Override
-    public void update(Subject subj, Object data) {
-        update();
-    }
-
-    public void update(){
+    public void update() {
         repaint();
-        refreshFrames();
+        updateFPSCounter();
     }
-    
+
 }

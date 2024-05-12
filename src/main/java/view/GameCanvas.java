@@ -3,75 +3,100 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.List;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
-import scene.GameScene;
-import scene.Vector2;
-import scene.element.Element;
+import model.element.Element;
+import model.scene.GameScene;
+import utils.Vector2;
 
-public class GameCanvas extends JPanel {
+public class GameCanvas extends JComponent {
+    
     private static final Color BACKGROUND_COLOR = Color.WHITE;
     
-    private Element[][] elements;
+    private List<Element> elements;
     
     private int width;
+    
     private int height;
-    private int mapWidth;
-    private int mapHeight;
+    
+    private int gameWidth;
+    
+    private int gameHeight;
+    
+    private double reelSize;
 
-    private int elementWidth;
-    private int elementHeight;
-
-    public GameCanvas(GameScene gameScene){
+    private int elementSize;
+    
+    public GameCanvas(GameScene gameScene) {
         this.elements = gameScene.getElements();
-        this.mapWidth = elements.length;
-        this.mapHeight = elements[0].length;
+        this.gameWidth = gameScene.getWidth();
+        this.gameHeight = gameScene.getHeight();
         setLayout(new BorderLayout());
     }
 
-    public Vector2 getLocation(int x, int y){
+    public Vector2 getLocation(int x, int y) {
         return new Vector2(
-            (x * mapWidth) / width,
-            ((height - y) * mapHeight) / height
+            (int)(x / reelSize),
+            (int)((this.height - y - 1) / reelSize)
         );
     }
-
-    private Vector2 getLocationInScreen(int x, int y){
-        return new Vector2(
-            (width * x) / mapWidth,
-            (height * y) / mapHeight
-        );
+    
+    private double getReelSize() {
+        int minScreenSize = Math.min(this.width, this.height);
+        int maxGameSize = Math.max(this.gameWidth, this.gameHeight);
+        return (double)minScreenSize / (double)maxGameSize;
+    }
+    
+    private int getReelX(int x) {
+        return (int)(x * this.reelSize);
+    }
+    
+    private int getReelY(int y) {
+        return (int)((this.gameHeight - y - 1) * this.reelSize);
     }
     
     @Override
     public void paint(Graphics g) {
-        width = getWidth();
-        height = getHeight();
-        elementWidth = width / mapWidth + 1;
-        elementHeight = height / mapHeight + 1;
+        this.width = getWidth();
+        this.height = getHeight();
+        this.reelSize = getReelSize();
+        this.elementSize = (int)this.reelSize + 1;
 
         clearScreen(g);
+        // g.translate(this.width / 2, 0);
         draw(g);
+        // g.translate(- this.width / 2, 0);
         paintChildren(g);
     }
 
-    private void clearScreen(Graphics g){
+    private void clearScreen(Graphics g) {
         g.setColor(BACKGROUND_COLOR);
-        g.fillRect(0, 0, width, height);
+        g.fillRect(0, 0, this.width, this.height);
     }
 
-    private void draw(Graphics g){
-        for (int i = 0; i < mapWidth; i++) {
-            for (int j = 0; j < mapHeight; j++) {
-                drawElement(g, elements[i][j], i, mapHeight - j - 1);
-            }
-        }
+    private void draw(Graphics g) {
+        g.setColor(Color.GRAY);
+        g.fillRect(
+            0,
+            0,
+            getReelX(this.gameWidth),
+            getReelY(-1)
+        );
+
+        this.elements.forEach(element -> drawElement(g, element));
     }
 
-    private void drawElement(Graphics g, Element element, int x, int y){
-        Vector2 vec2 = getLocationInScreen(x, y);
+    private void drawElement(Graphics g, Element element) {
+        Vector2 position = element.getPosition();
         g.setColor(element.getColor());
-        g.fillRect(vec2.x, vec2.y, elementWidth, elementHeight);
+        g.fillRect(
+            getReelX(position.x),
+            getReelY(position.y),
+            this.elementSize,
+            this.elementSize
+        );
     }
+
 }

@@ -1,22 +1,18 @@
 package view;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.util.ArrayList;
 import java.util.List;
 
-import scene.GameScene;
-import scene.Shape;
-import scene.element.Element;
-import scene.element.Empty;
-import scene.element.Sand;
-import scene.element.Smoke;
-import scene.element.Wall;
-import scene.element.Water;
+import model.Shape;
+import model.element.Element;
+import model.element.Sand;
+import model.element.Smoke;
+import model.element.Wall;
+import model.element.Water;
+import model.scene.GameScene;
 import view.gui.Button;
 import view.gui.GUI;
-import view.gui.Panel;
-import view.gui.Text;
 import view.gui.TextHorizontalAlignment;
 import view.gui.TextVerticalAlignment;
 
@@ -24,8 +20,7 @@ public class GameGUI extends GUI {
     
     private static Shape[] shapes = Shape.values();
 
-    private static List<Class<? extends Element>> elements = new ArrayList<>(){{
-        add(Empty.class);
+    private static List<Class<? extends Element>> elements = new ArrayList<>() {{
         add(Wall.class);
         add(Water.class);
         add(Smoke.class);
@@ -33,8 +28,9 @@ public class GameGUI extends GUI {
     }};
     
     private GameCanvas gameCanvas;
+    
     private GameScene gameScene;
-
+    
     public GameGUI(Container container, GameCanvas gameCanvas, GameScene gameScene){
         super(container);
         this.gameCanvas = gameCanvas;
@@ -44,9 +40,10 @@ public class GameGUI extends GUI {
     @Override
     protected void init(){
         int crntButton = 0;
+        
         for(Class<? extends Element> element : elements){
             Button elementButton = new Button(element.getSimpleName(), () -> {
-                gameScene.setSelectedElement(element);
+                gameScene.setCurrentElement(element);
                 System.out.println("Element selectionné: " + element.getSimpleName());
             });
             
@@ -63,7 +60,7 @@ public class GameGUI extends GUI {
         crntButton = 0;
         for(Shape shape : shapes){
             Button shapeButton = new Button(shape.name().toLowerCase(), () -> {
-                gameScene.setSelectedShape(shape);
+                gameScene.setCurrentShape(shape);
                 System.out.println("Forme selectionnée: " + shape);
             });
 
@@ -91,7 +88,7 @@ public class GameGUI extends GUI {
     @Override
     public void mousePressed(int button, int x, int y) {
         if(button == LEFT_BUTTON){
-            gameScene.setAction(gameCanvas.getLocation(x, y));
+            gameScene.action(gameCanvas.getLocation(x, y));
         }
     }
 

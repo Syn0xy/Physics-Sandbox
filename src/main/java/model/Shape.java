@@ -1,8 +1,8 @@
-package scene;
+package model;
 
 public enum Shape {
     PIXEL,
-    CIRCLE,
     SQUARE,
+    CIRCLE,
     TRIANGLE
 }
